@@ -106,10 +106,6 @@ public:
 
 	PWSTR                                   _pszUserSid;
 private:
-	HRESULT call_multiotp(_In_ PCWSTR username,
-		  _In_ PCWSTR PREV_PIN,
-		  _In_ PCWSTR PIN);
-
     virtual ~CCredentialProviderCredential();
     long                                    _cRef;
     CREDENTIAL_PROVIDER_USAGE_SCENARIO      _cpus;                                          // The usage scenario for which we were enumerated.

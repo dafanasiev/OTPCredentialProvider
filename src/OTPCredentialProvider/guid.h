@@ -10,3 +10,5 @@
 // {1aebb89c-B0A1-4C4D-8B2B-4FF4E0A3D978}
 DEFINE_GUID(CLSID_COTPCredentialProvider,
 	0x1aebb89c, 0xb0a1, 0x4c4d, 0x8b, 0x2b, 0x4f, 0xf4, 0xe0, 0xa3, 0xd9, 0x78);
+
+#define CLSID_COTPCredentialProviderAsString L"{1aebb89c-B0A1-4C4D-8B2B-4FF4E0A3D978}"

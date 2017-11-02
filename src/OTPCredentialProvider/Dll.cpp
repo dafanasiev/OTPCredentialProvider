@@ -12,6 +12,9 @@
 #include <unknwn.h>
 #include "Dll.h"
 #include "helpers.h"
+#include "Logger.h"
+#include "BEManager.h"
+#include "registry.h"
 
 static long g_cRef = 0;   // global dll reference count
 HINSTANCE g_hinst = NULL; // global dll hinstance
@@ -59,17 +62,17 @@ public:
         {
             //hr = COTPCredentialProvider_CreateInstance(riid, ppv);
 			if (IID_ICredentialProvider == riid) {
-				if (DEVELOPING) PrintLn("invoke IID_ICredentialProvider");
+				PrintLn("invoke IID_ICredentialProvider");
 				hr = COTPCredentialProvider_CreateInstance(riid, ppv);
 			}
 			else if (IID_ICredentialProviderFilter == riid) {
-				if (DEVELOPING) PrintLn("invoke IID_ICredentialProviderFilter");
+				PrintLn("invoke IID_ICredentialProviderFilter");
 				hr = CLMSFilter_CreateInstance(riid, ppv);
 			}
 			else {
 				*ppv = NULL;
 				hr = CLASS_E_NOAGGREGATION;
-				if (DEVELOPING) PrintLn("invoke unknown object");
+				PrintLn("invoke unknown object");
 			}
 
         }
@@ -129,20 +132,34 @@ HRESULT CClassFactory_CreateInstance(__in REFCLSID rclsid, __in REFIID riid, __d
 
 void DllAddRef()
 {
-	if (DEVELOPING) PrintLn("DllAddRef");
-    InterlockedIncrement(&g_cRef);
+	PrintLn("DllAddRef");
+    long newVal = InterlockedIncrement(&g_cRef);
+	if (newVal == 1) {
+		PWSTR pluginDllName;
+		if (readRegistryConfValueString(L"Plugin", &pluginDllName, L"")) {
+			BEManager::Instance()->Load(pluginDllName);
+			CoTaskMemFree(pluginDllName);
+		}
+		else {
+			PrintLn("Plugin not set in configuration?");
+		}
+	}
 }
 
 void DllRelease()
 {
-	if (DEVELOPING) PrintLn("DllRelease");
-    InterlockedDecrement(&g_cRef);
+	PrintLn("DllRelease");
+    long newVal = InterlockedDecrement(&g_cRef);
+	if (newVal == 0) {
+		BEManager::Instance()->UnLoad();
+	}
 }
 
 STDAPI DllCanUnloadNow()
 {
-	if (DEVELOPING) PrintLn("DllCanUnloadNow?");
-    return (g_cRef > 0) ? S_FALSE : S_OK;
+	PrintLn("DllCanUnloadNow?");
+	HRESULT rv = (g_cRef > 0) ? S_FALSE : S_OK;
+	return rv;
 }
 
 STDAPI DllGetClassObject(__in REFCLSID rclsid, __in REFIID riid, __deref_out void** ppv)
