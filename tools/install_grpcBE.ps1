@@ -1,7 +1,8 @@
 param (
     [Parameter(Mandatory=$true)] [bool] $RDPOnly,
     [Parameter(Mandatory=$true)] [string] $serverAddress,
-    [Parameter(Mandatory=$true)] [string] $serverApikey
+    [Parameter(Mandatory=$true)] [string] $serverApikey,
+    [Parameter(Mandatory=$false)] [string] $defaultDomain
 )
 
 $SelfDir = $PSScriptRoot
@@ -32,3 +33,7 @@ New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\C
 ########################################## plugin config ##########################################
 New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'grpc.endpoint' -Value $serverAddress | out-null
 New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'grpc.apikey' -Value $serverApikey | out-null
+
+if ("$defaultDomain" -ne "") {
+    New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'Defaultdomain' -Value $defaultDomain | out-null
+}

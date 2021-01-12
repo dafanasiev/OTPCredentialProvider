@@ -1,8 +1,9 @@
 param (
     [Parameter(Mandatory=$true)] [bool] $RDPOnly,
     [Parameter(Mandatory=$true)] [string] $multiOTPPath,
-    [Parameter(Mandatory=$true)] [int] $multiOTPTimeout
-    [Parameter(Mandatory=$false)] [bool] $multiOTPDebug
+    [Parameter(Mandatory=$true)] [int] $multiOTPTimeout,
+    [Parameter(Mandatory=$false)] [bool] $multiOTPDebug,
+    [Parameter(Mandatory=$false)] [string] $defaultDomain
 )
 
 $SelfDir = $PSScriptRoot
@@ -37,4 +38,8 @@ if($multiOTPDebug) {
 	New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'dword' -Name 'multiotp.debug' -Value 1 | out-null
 } else {
 	New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'dword' -Name 'multiotp.debug' -Value 0 | out-null
+}
+
+if ("$defaultDomain" -ne "") {
+    New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'Defaultdomain' -Value $defaultDomain | out-null
 }
