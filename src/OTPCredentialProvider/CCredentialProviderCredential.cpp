@@ -748,8 +748,12 @@ HRESULT CCredentialProviderCredential::GetSerialization(_Out_ CREDENTIAL_PROVIDE
 	else {
 		hr = wcscpy_s(uname, 1024, _pszQualifiedUserName);
 
-		//append localhost as a domain for windows logon
-		wcscpy_s(fullname, 1024, L".\\");
+		//append localhost as a domain for windows logon if other value not set in registry
+		PWSTR domain;
+		readRegistryConfValueString(L"DefaultDomain", &domain, L".");
+		wcscpy_s(fullname, 1024, domain);
+		CoTaskMemFree(domain);
+		wcscat_s(fullname, 1024, L"\\");
 		wcscat_s(fullname, 1024, _pszQualifiedUserName);
 
 		CoTaskMemFree(_pszQualifiedUserName);
