@@ -35,5 +35,5 @@ New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'grpc.e
 New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'grpc.apikey' -Value $serverApikey | out-null
 
 if ("$defaultDomain" -ne "") {
-    New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'Defaultdomain' -Value $defaultDomain | out-null
+    New-ItemProperty -Path "HKCR:\CLSID\$clsid" -PropertyType 'string' -Name 'DefaultDomain' -Value $defaultDomain | out-null
 }
